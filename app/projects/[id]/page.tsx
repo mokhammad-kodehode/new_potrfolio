@@ -6,6 +6,7 @@ import PageTransition from "@/app/components/PageTransiction";
 import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import CanvasBG from "@/app/components/canvas/canvasBG";
+import Link from "next/link";
 
 
 export default function ProjectDetails() {
@@ -79,9 +80,9 @@ export default function ProjectDetails() {
 
         {/* Кнопка возврата */}
         <div className="mt-12 text-center">
-          <a href="/projects" className="text-white underline">
+          <Link href="/projects" className="text-white underline">
             ← Back to Projects
-          </a>
+          </Link>
         </div>
       </div>
     </PageTransition>
