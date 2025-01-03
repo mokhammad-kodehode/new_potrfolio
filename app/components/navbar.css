@@ -1,0 +1,39 @@
+.menu-item {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out;
+}
+
+.menu-item.active-scroll {
+  transform: scale(1.1);
+}
+
+
+
+.menu-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 90%;
+  height: 110%;
+  background-color: white;
+  transform: translateY(-50%) skewX(-20deg);
+  transition: all 0.5s ease;
+  z-index: 0;
+}
+
+.menu-item.active-scroll::before {
+  left: 0;
+}
+
+.menu-item a {
+  mix-blend-mode: difference;
+  position: relative;
+  z-index: 1;
+  color: white;
+  font-size: 3rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}

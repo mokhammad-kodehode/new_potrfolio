@@ -1,0 +1,8 @@
+canvas {
+  display: block;
+  margin: 0 auto; /* Center the canvas */
+  background: none; /* Make canvas background transparent */
+  width: 100%; /* Adjust width for better scaling */
+  height: auto; /* Maintain aspect ratio */
+}
+
