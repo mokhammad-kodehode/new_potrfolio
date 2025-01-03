@@ -49,7 +49,7 @@ export default function About() {
             <span className="relative pl-1 pr-1 inline-block ml-2 overflow-hidden">
                 <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white animate-border"></span>
                 <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
-                <h1 className={`text-6xl font-bold mb-1 leading-tight mix-blend-difference opacity-0 animate-fadeIn ${isMobile ? "text-4xl" : ""}`}>
+                <h1 className= "text-5xl font-bold mb-1 leading-tight mix-blend-difference opacity-0 animate-fadeIn md:text-7xl" >
                   ABOUT ME
                 </h1>
               </span>

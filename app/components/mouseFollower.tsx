@@ -46,8 +46,8 @@ export default function MouseFollower() {
     <div
       className="pointer-events-none fixed w-6 h-6 bg-white rounded-full opacity-90 mix-blend-difference z-[9999]"
       style={{
-        top: `${smoothPosition.y - 14}px`,
-        left: `${smoothPosition.x - 14}px`,
+        top: `${smoothPosition.y - 12}px`,
+        left: `${smoothPosition.x - 12}px`,
         transform: isVisible ? "scale(1)" : "scale(0.5)",
         transition: "transform 0.2s ease-out, opacity 0.2s ease-out",
       }}

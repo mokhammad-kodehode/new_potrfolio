@@ -9,9 +9,17 @@ export default {
   theme: {
     extend: {
       keyframes: {
+        scaleOut: {
+          '0%': { transform: 'scale(1.5)' },
+          '100%': { transform: 'scale(1)' },
+        },
         borderExpand: {
           "0%": { width: "0" },
           "100%": { width: "100%" },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px) scale(0.9)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
         textFadeIn: {
           "0%": { opacity: "0", transform: "translateY(10px)" },
@@ -24,7 +32,7 @@ export default {
         },
         fillBackground: {
           "0%": { height: "2px", top: "100%", opacity: "1" },
-          "100%": { height: "100%", top: "0", opacity: "1" },
+          "100%": { height: "50%", top: "0", opacity: "1" },
         },
         marqueeLeft: {
           "0%": { transform: "translateX(100%)" },
@@ -46,7 +54,9 @@ export default {
         },
       },
       animation: {
+        scaleOut: 'scaleOut 1s ease-out forwards',
         border: "borderExpand 1s ease-out forwards",
+        fadeInUp: 'fadeInUp 0.8s ease-out forwards',
         textWipe: "textWipe .5s ease-in-out forwards",
         textReturn: "textReturn 1s ease-in-out forwards",
         fillBackground: "fillBackground 0.6s ease-out 0.6s forwards",
