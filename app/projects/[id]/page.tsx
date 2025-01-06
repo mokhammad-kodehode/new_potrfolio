@@ -32,7 +32,6 @@ export default function ProjectDetails() {
           </div>
         </div>
 
-        {/* Теги */}
         <p className="text-base md:text-lg text-center w-full md:w-[750px] mb-8 opacity-70">
           {project.description_two}
         </p>
@@ -47,7 +46,6 @@ export default function ProjectDetails() {
           ))}
         </div>
 
-        {/* Информация о проекте */}
         <a
           href={project.github}
           target="_blank"
@@ -61,13 +59,13 @@ export default function ProjectDetails() {
         <div className="flex gap-5 justify-center">
             <button
               onClick={() => setShowIframe(true)}
-              className="px-6 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-300 transition duration-300"
+              className="px-6 py-3 bg-white text-black rounded-sm  font-bold hover:bg-gray-300 hover:rounded-lg transition-all duration-500 ease-in-out"
             >
               Open Project
             </button>
-            <Link target="blank" href="https://mohammad-potrfolio.vercel.app/" passHref>
+            <Link target="blank" href={project.visitLink} passHref>
               <button
-                className="px-6 py-3 border border-white bg-black text-white rounded-lg font-bold hover:bg-transparent transition duration-300"
+                className="px-6 py-3 border border-white rounded-sm bg-black text-white  hover:bg-transparent hover:rounded-lg transition-all duration-500 ease-in-out"
               >
                 Visit Page
               </button>

@@ -5,7 +5,7 @@ import "./navbar.css";
 import CanvasAnimation from "./canvas/canvasone/canvas";
 import { FaGithub, FaLinkedin } from "react-icons/fa"; // Импорт иконок
 import Link from "next/link";
-
+import projects from "../data/projects";
 
 const menuItems = [
   { name: "HOME", audio: "/audio/Home.wav", link: "/" },
@@ -19,6 +19,7 @@ const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(-1); // -1 означает, что ничего не активно
   const audioRefs = useRef<HTMLAudioElement[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [showProjectList, setShowProjectList] = useState(false);
 
 useEffect(() => {
   const handleResize = () => {
@@ -97,9 +98,12 @@ useEffect(() => {
               }`}
               onMouseEnter={() => {
                 setActiveIndex(index);
-                playSound(index); // Play sound on hover
+                playSound(index);
+                if (item.name === "PROJECTS") {
+                  setShowProjectList(true); // Показываем проекты при наведении
+                }
               }}
-              onMouseLeave={() => setActiveIndex(-1)}
+              onMouseLeave={() => setShowProjectList(false)}
             >
               {/* Render link */}
               <Link
@@ -122,6 +126,18 @@ useEffect(() => {
             </li>
           ))}
         </ul>
+        {showProjectList && (
+          <div className="absolute bottom-[200px] left-0 w-full bg-[#121212] p-4 text-white">
+            <h3 className="text-xl mb-4">My Projects</h3>
+            <ul className="space-y-2">
+              {projects.map((project) => (
+                <li key={project.id} className="hover:underline">
+                  <Link href={project.link}>{project.title}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {!isMobile && <CanvasAnimation activeIndex={activeIndex} />}
 
           <div className="fixed bottom-0 left-0 w-full text-white py-4">
