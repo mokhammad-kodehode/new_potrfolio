@@ -13,8 +13,29 @@ export default function Projects() {
   const [circleSize, setCircleSize] = useState(48);
   const [visibleProjects, setVisibleProjects] = useState<number>(0);
 
-
+  useEffect(() => {
+    const handleScroll = () => {
+      const elements = document.querySelectorAll(".project-image");
+    
+      elements.forEach((element, index) => {
+        const rect = element.getBoundingClientRect();
+        
+        // Check if the element belongs to the second or third row
+        const isSecondOrThirdRow = index >= 3 && index < 9; 
   
+        if (rect.top < window.innerHeight * 0.75 && isSecondOrThirdRow) {
+          element.classList.add("animate-scaleOut");
+        } else {
+          element.classList.remove("animate-scaleOut");
+        }
+      });
+    };
+  
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+
 
   useEffect(() => {
    
@@ -60,7 +81,7 @@ export default function Projects() {
     <PageTransition>
       <div className="min-h-screen  text-white px-12 py-8 md:py-16 relative">
         {/* Centered Title Section */}
-        <div className="flex justify-center mt-5 mb-16 items-center w-full">
+        <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
             <span className="absolute bottom-0 left-0 w-full h-[6px] bg-white animate-border"></span>
             <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
@@ -87,9 +108,9 @@ export default function Projects() {
                   <Image
                     src={project.image}
                     alt={project.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="  animate-scaleOut"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    className=" project-image   animate-scaleOut"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60 group-hover:opacity-10"></div>
                 </div>

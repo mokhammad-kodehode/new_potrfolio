@@ -31,8 +31,8 @@ export default function MouseFollower() {
 
     const animate = () => {
       setSmoothPosition((prev) => ({
-        x: prev.x + (mousePosition.x - prev.x) * 0.1,
-        y: prev.y + (mousePosition.y - prev.y) * 0.1,
+        x: prev.x + (mousePosition.x - prev.x) * 0.2,
+        y: prev.y + (mousePosition.y - prev.y) * 0.2,
       }));
       animationFrameId = requestAnimationFrame(animate);
     };

@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    optimizeCss: false, // Отключает автоматическую предзагрузку CSS
+  },
 };
 
 export default nextConfig;

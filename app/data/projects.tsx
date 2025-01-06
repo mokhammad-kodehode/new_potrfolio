@@ -34,6 +34,22 @@ const projects = [
       tags: ["Design", "Development", "eCommerce", "Strategy"],
       image: "/travel.png",
       link: "/projects/travel-and-study",
+    },
+    {
+        id: "serenity-sounds",
+      title: "Serenity Sounds",
+      description: "Serenity Sounds is an interactive web application that I have designed to offer users an immersive experience with the soothing sounds of nature.",
+      tags: ["Web application", "Next.js", "HTML", "TypeScript", "CSS"],
+      image: "/serenity.png",
+      link: "/projects/serenity-sounds",
+    },
+    {
+        id: "serenity-sounds",
+      title: "TRAVEL AND STUDY",
+      description: "Travel and Study provides opportunities for cultural immersion and learning.",
+      tags: ["Design", "Development", "eCommerce", "Strategy"],
+      image: "/travel.png",
+      link: "/projects/travel-and-study",
     }
   ];
   

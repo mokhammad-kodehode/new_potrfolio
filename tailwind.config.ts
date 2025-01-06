@@ -10,8 +10,8 @@ export default {
     extend: {
       keyframes: {
         scaleOut: {
-          '0%': { transform: 'scale(1.5)' },
-          '100%': { transform: 'scale(1)' },
+          '0%': { transform: 'scale(1.5)', opacity: '0.5' },
+        '100%': { transform: 'scale(1)', opacity: '1' },
         },
         borderExpand: {
           "0%": { width: "0" },

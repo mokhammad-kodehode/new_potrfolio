@@ -22,9 +22,15 @@ export default function ProjectDetails() {
     <PageTransition>
       <div className="min-h-screen flex flex-col justify-center items-center  text-white px-6 md:px-12 py-8 md:py-16">
       <CanvasBG/>
-          <h1 className="text-4xl mb-5 md:text-7xl font-bold uppercase leading-tight text-center md:text-left">
+          <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
+          <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
+            <span className="absolute bottom-0 left-0 w-full h-[6px] bg-white animate-border"></span>
+            <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
+            <h1 className="text-5xl font-bold uppercase leading-tight mix-blend-difference md:text-7xl mt-2 mb-2 md: tracking-widest">
             {project.title}
-          </h1>
+            </h1>
+          </div>
+        </div>
 
         {/* Теги */}
         <p className="text-base md:text-lg text-center w-full md:w-[750px] mb-8 opacity-70">
@@ -52,12 +58,21 @@ export default function ProjectDetails() {
         </a>
 
         {/* Кнопка для открытия iframe */}
-        <button
-          onClick={() => setShowIframe(true)}
-          className="px-6 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-300 transition duration-300"
-        >
-          Open Project
-        </button>
+        <div className="flex gap-5 justify-center">
+            <button
+              onClick={() => setShowIframe(true)}
+              className="px-6 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-300 transition duration-300"
+            >
+              Open Project
+            </button>
+            <Link target="blank" href="https://mohammad-potrfolio.vercel.app/" passHref>
+              <button
+                className="px-6 py-3 border border-white bg-black text-white rounded-lg font-bold hover:bg-transparent transition duration-300"
+              >
+                Visit Page
+              </button>
+            </Link>
+        </div>
 
         {/* Модальное окно с iframe */}
         {showIframe && (
