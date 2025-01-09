@@ -14,7 +14,7 @@ const projects = [
     },
     {
       id: "travel",
-      title: "TRAVEL AND STUDY",
+      title: "Travel and Study",
       description_two: "I developed a comprehensive website for a Visa Processing Center as a freelance project, designed to streamline the visa application process and provide detailed information for multiple countries. Built with Next.js and TypeScript, the platform offers a modern, responsive, and user-friendly interface that ensures seamless navigation and accessibility. This project highlights my expertise in delivering tailored web solutions that enhance user experience while effectively addressing complex business requirements.",
       description: "A platform offering cultural immersion and educational opportunities for travelers.",
       tags: [ "React","CSS","TypeScript", "UI/UX","Web Development" ],
@@ -26,7 +26,7 @@ const projects = [
     },
     {
       id: "weather-app",
-      title: "WEATHER APP",
+      title: "Weather-app",
       description_two: "The Weather App is a web application that allows users to fetch current weather data for a specific city. The app utilizes an open API to retrieve weather information. Users can enter the name of a city in the search field, and the app will display details such as the current temperature, weather conditions, wind speed, humidity,and other relevant data.",
       description: "A web app displaying real-time weather data for cities worldwide.",
       tags: ["JavaScript","HTML", "CSS", "REST API", "Web application", "UI/UX"],

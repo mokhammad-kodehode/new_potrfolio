@@ -92,27 +92,27 @@ useEffect(() => {
         <ul className="flex flex-col space-y-6 text-6xl text-center justify-center h-full">
           {menuItems.map((item, index) => (
             <li
-              key={index}
-              className={`menu-item ${
-                index === activeIndex ? "active-scroll" : ""
-              }`}
-              onMouseEnter={() => {
-                setActiveIndex(index);
-                playSound(index);
-                if (item.name === "PROJECTS") {
-                  setShowProjectList(true); // Показываем проекты при наведении
-                }
-              }}
-              onMouseLeave={() => setShowProjectList(false)}
-            >
-              {/* Render link */}
-              <Link
-                href={item.link} // Use the link from the menuItems array
-                target={item.link.startsWith("http") ? "_blank" : "_self"} // Open external links in a new tab
-                rel={item.link.startsWith("http") ? "noopener noreferrer" : undefined} // For security with external links
-                onClick={() => setIsOpen(false)} 
-                // Optional: Styling for the link
+                key={index}
+                className={`menu-item ${index === activeIndex ? "active-scroll" : ""}`}
+                onMouseEnter={() => {
+                  setActiveIndex(index);
+                  playSound(index);
+                  if (item.name === "PROJECTS") {
+                    setShowProjectList(true); // Показываем проекты при наведении
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (item.name !== "PROJECTS") {
+                    setShowProjectList(false);
+                  }
+                }}
               >
+                <Link
+                  href={item.link}
+                  target={item.link.startsWith("http") ? "_blank" : "_self"}
+                  rel={item.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                  onClick={() => setIsOpen(false)}
+                >
                 {item.name}
               </Link>
               {/* Audio element */}
@@ -127,9 +127,12 @@ useEffect(() => {
           ))}
         </ul>
         {showProjectList && (
-          <div className="absolute bottom-[200px] left-0 w-full bg-[#121212] p-4 text-white">
-            <h3 className="text-xl mb-4">My Projects</h3>
-            <ul className="space-y-2">
+          <div
+            className="absolute bottom-[250px] left-1/2 transform -translate-x-1/2 w-full bg-[#0a0a0a] bg-opacity-95 p-4 text-white rounded-lg hidden md:block"
+            onMouseEnter={() => setShowProjectList(true)} // Keep visible when hovering
+            onMouseLeave={() => setShowProjectList(false)} // Hide when leaving the container
+          >
+            <ul className="space-y-2 text-center">
               {projects.map((project) => (
                 <li key={project.id} className="hover:underline">
                   <Link href={project.link}>{project.title}</Link>
@@ -138,6 +141,8 @@ useEffect(() => {
             </ul>
           </div>
         )}
+
+
         {!isMobile && <CanvasAnimation activeIndex={activeIndex} />}
 
           <div className="fixed bottom-0 left-0 w-full text-white py-4">

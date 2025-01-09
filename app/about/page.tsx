@@ -1,7 +1,7 @@
 "use client";
 
 import InteractiveImageCanvas from "../components/canvas/InterImage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+{/*import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHtml5,
   faCss3Alt,
@@ -14,7 +14,7 @@ import {
   faGitAlt,
 } from "@fortawesome/free-brands-svg-icons";
 
-import { faDiagramProject, faCodeBranch } from "@fortawesome/free-solid-svg-icons"; // For Power Apps and Next.js icons
+import { faDiagramProject, faCodeBranch } from "@fortawesome/free-solid-svg-icons"; // For Power Apps and Next.js icons */}
 import PageTransition from "../components/PageTransiction";
 import { useState, useEffect } from "react";
 
@@ -45,26 +45,26 @@ export default function About() {
           <div className={`${isMobile ? "w-full mb-8" : "w-1/3"}`}>
           {!isMobile && <InteractiveImageCanvas />}
           </div>
-          <div className={`${isMobile ? "w-full" : "w-[680px]"} px-2 text-center`}>
+          <div className={` ${isMobile ? "w-full" : "w-[680px]"} px-2 text-center`}>
             <span className="relative pl-1 pr-1 inline-block ml-2 overflow-hidden">
                 <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white animate-border"></span>
                 <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
-                <h1 className= "text-5xl font-bold mb-1 leading-tight mix-blend-difference opacity-0 animate-fadeIn md:text-7xl" >
+                <h1 className= "text-5xl  font-bold mb-1 leading-tight mix-blend-difference opacity-0 animate-fadeIn md:text-7xl" >
                   ABOUT ME
                 </h1>
               </span>
-            <p className={`mt-4 ${isMobile ? "text-sm" : ""}`}>
+              <p className={`mt-4 opacity-70 text-[20px] ${isMobile ? "text-sm" : ""} z-10`}>
               My name is Mohammad, and I am a passionate front-end developer. Since early 2023, I’ve been part of an intensive Kodehode course, where I quickly mastered full-stack development. Coding has become more than a profession for me—it’s a way of life.
             </p>
-            <p className={`mt-4 ${isMobile ? "text-sm" : ""}`}>
+            <p className={`mt-4 opacity-70 text-[20px] ${isMobile ? "text-sm" : ""}`}>
               Previously, I was an entrepreneur with several successful projects in the service and entertainment industries, gaining valuable experience in marketing and business management. Now, I aim to combine my technical and entrepreneurial skills to create impactful projects.
             </p>
-            <p className={`mt-4 ${isMobile ? "text-sm" : ""}`}>
+            <p className={` relative mt-4 mix-blend-difference opacity-70 text-[20px] ${isMobile ? "text-sm" : ""} `}>
               Outside of work, I love traveling, playing video games, spending time with my family, and cycling. I’m honest, responsible, and always motivated to grow and learn. For me, coding is about solving real problems and making life better for others.
             </p>
 
             {/* My Skills Section */}
-            <div className="w-full mt-12">
+            {/*<div className="w-full mt-12">
               <div className="relative h-13 overflow-hidden">
                 <div className="flex gap-8 animate-marquee-left">
                   <div className="group flex flex-col items-center">
@@ -157,7 +157,7 @@ export default function About() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>
