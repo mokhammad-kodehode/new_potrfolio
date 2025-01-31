@@ -91,11 +91,11 @@ export default function Projects() {
           </div>
         </div>
         {/* Project Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-16 md:px-[150px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-16 md:px-[50px]">
           {projects.map((project, index) => (
             <Link href={project.link} key={index} passHref>
               <div
-                className={`group relative bg-black w-full bg- overflow-hidden   cursor-pointer transition-all duration-700 transform hover:bg-white ${
+                className={`group relative bg-black w-full bg- overflow-hidden rounded-sm  cursor-pointer transition-all duration-700 transform hover:bg-white hover:rounded-lg ${
                   visibleProjects > index
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
@@ -109,6 +109,7 @@ export default function Projects() {
                     src={project.image}
                     alt={project.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     style={{ objectFit: "cover" }}
                     className=" project-image   animate-scaleOut"
                   />

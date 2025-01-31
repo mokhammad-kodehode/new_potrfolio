@@ -65,7 +65,28 @@ export default {
         "marquee-left": "marqueeLeft 30s linear infinite",
         "marquee-right": "marqueeRight 10s linear infinite",
       },
+      colors: {
+        // Define custom colors for themes
+        light: {
+          background: "#ededed",
+          text: "#171717",
+        },
+        dark: {
+          background: "#0a0a0a",
+          text: "#ededed",
+        },
+        customColor: {
+          gradientStart: "#4f46e5", // Blue
+          gradientEnd: "#ec4899",  // Pink
+          text: "#ffffff",
+        },
+      },
+      backgroundImage: {
+        // Add custom gradient for the color theme
+        "custom-gradient": "linear-gradient(to right, #4f46e5, #ec4899)",
+      },
     },
   },
   plugins: [],
+  darkMode: "class", // Use class-based dark mode
 } satisfies Config;

@@ -89,7 +89,7 @@ useEffect(() => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out z-40`}
       >
-        <ul className="flex flex-col space-y-6 text-6xl text-center justify-center h-full">
+        <ul className="flex flex-col relative space-y-6 text-6xl text-center justify-center h-full">
           {menuItems.map((item, index) => (
             <li
                 key={index}
@@ -125,14 +125,13 @@ useEffect(() => {
               />
             </li>
           ))}
-        </ul>
-        {showProjectList && (
+         {showProjectList && (
           <div
-            className="absolute bottom-[250px] left-1/2 transform -translate-x-1/2 w-full bg-[#0a0a0a] bg-opacity-95 p-4 text-white rounded-lg hidden md:block"
+            className="absolute bottom-[200px] left-1/2 transform -translate-x-1/2 w-full bg-[#0a0a0a] bg-opacity-95 p-4 text-white rounded-lg hidden md:block"
             onMouseEnter={() => setShowProjectList(true)} // Keep visible when hovering
             onMouseLeave={() => setShowProjectList(false)} // Hide when leaving the container
           >
-            <ul className="space-y-2 text-center">
+            <ul className="space-y-2 text-sm text-center">
               {projects.map((project) => (
                 <li key={project.id} className="hover:underline">
                   <Link href={project.link}>{project.title}</Link>
@@ -141,6 +140,8 @@ useEffect(() => {
             </ul>
           </div>
         )}
+
+        </ul>
 
 
         {!isMobile && <CanvasAnimation activeIndex={activeIndex} />}
