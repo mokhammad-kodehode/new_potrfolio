@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import projects from "../data/projects";
 
+
 export default function Projects() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [smoothPosition, setSmoothPosition] = useState({ x: 0, y: 0 });
@@ -95,7 +96,7 @@ export default function Projects() {
           {projects.map((project, index) => (
             <Link href={project.link} key={index} passHref>
               <div
-                className={`group relative bg-black w-full bg- overflow-hidden rounded-sm  cursor-pointer transition-all duration-700 transform hover:bg-white hover:rounded-lg ${
+                className={`group relative bg-black w-full bg- overflow-hidden rounded-sm  cursor-pointer transition-all duration-700 transform hover:bg-white ${
                   visibleProjects > index
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"

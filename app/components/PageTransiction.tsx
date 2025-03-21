@@ -8,11 +8,15 @@ export default function PageTransition({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   useEffect(() => {
-    // Блокируем скроллинг при загрузке страницы
+    // Отключаем скролл при начале анимации
     document.body.style.overflow = "hidden";
 
+    const timeoutId = setTimeout(() => {
+      document.body.style.overflow = "";
+    }, 600); // Делаем задержку чуть больше, чем длительность анимации (500ms)
+
     return () => {
-      // Включаем скроллинг после завершения анимации
+      clearTimeout(timeoutId);
       document.body.style.overflow = "";
     };
   }, [pathname]);
@@ -21,14 +25,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 0 }} // Анимация снизу вверх
+        initial={{ opacity: 0, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 0 }} // Анимация при выходе
+        exit={{ opacity: 0, y: 0 }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        onAnimationComplete={() => {
-          // Сбрасываем overflow после завершения анимации
-          document.body.style.overflow = "";
-        }}
       >
         {children}
       </motion.div>

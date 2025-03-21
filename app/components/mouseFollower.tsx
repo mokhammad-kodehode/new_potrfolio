@@ -1,14 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function MouseFollower() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
-  const [smoothPosition, setSmoothPosition] = useState({ x: 0, y: 0 });
+  const mousePosition = useRef({ x: 0, y: 0 });
+  const smoothPosition = useRef({ x: 0, y: 0 });
+  const cursorRef = useRef<HTMLDivElement | null>(null);
+  const animationFrameId = useRef<number | null>(null); // Используем useRef
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      mousePosition.current = { x: e.clientX, y: e.clientY };
       setIsVisible(true);
     };
 
@@ -25,31 +27,34 @@ export default function MouseFollower() {
     };
   }, []);
 
-  // Smooth animation with requestAnimationFrame and proper cleanup
   useEffect(() => {
-    let animationFrameId: number;
-
     const animate = () => {
-      setSmoothPosition((prev) => ({
-        x: prev.x + (mousePosition.x - prev.x) * 0.2,
-        y: prev.y + (mousePosition.y - prev.y) * 0.2,
-      }));
-      animationFrameId = requestAnimationFrame(animate);
+      smoothPosition.current.x += (mousePosition.current.x - smoothPosition.current.x) * 0.2;
+      smoothPosition.current.y += (mousePosition.current.y - smoothPosition.current.y) * 0.2;
+
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${smoothPosition.current.x - 12}px, ${smoothPosition.current.y - 12}px)`;
+      }
+
+      animationFrameId.current = requestAnimationFrame(animate);
     };
 
-    animationFrameId = requestAnimationFrame(animate);
+    animationFrameId.current = requestAnimationFrame(animate);
 
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [mousePosition]); // Only update when mouse moves
+    return () => {
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, []);
 
   return (
     <div
-      className="pointer-events-none fixed w-6 h-6 bg-white rounded-full opacity-90 mix-blend-difference z-[9999]"
+      ref={cursorRef}
+      className="pointer-events-none fixed w-6 h-6 bg-white rounded-full opacity-90 mix-blend-difference z-[9999] transition-transform duration-200 ease-out"
       style={{
-        top: `${smoothPosition.y - 12}px`,
-        left: `${smoothPosition.x - 12}px`,
         transform: isVisible ? "scale(1)" : "scale(0.5)",
-        transition: "transform 0.2s ease-out, opacity 0.2s ease-out",
+        opacity: isVisible ? 1 : 0,
       }}
     />
   );

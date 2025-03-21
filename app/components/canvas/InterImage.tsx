@@ -24,11 +24,11 @@ class Particle implements ParticleProps {
     this.size = 3; // Увеличим размер частиц для лучшей видимости
     this.baseX = this.x;
     this.baseY = this.y;
-    this.density = Math.random() * 30 + 1;
+    this.density = Math.random() * 5 + 1;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)"
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.closePath();
@@ -60,6 +60,7 @@ const InteractiveImageCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: null as number | null, y: null as number | null, radius: 150 });
+  const animationFrameIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -71,52 +72,58 @@ const InteractiveImageCanvas = () => {
       return;
     }
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Устанавливаем размер canvas
+    const setCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles(); // Пересоздаем частицы при изменении размера
+    };
 
+    // Инициализируем частицы
+    const initParticles = () => {
+      const svg = new Image();
+      svg.src = "/Photo.svg"; // Убедитесь, что путь к SVG корректный
+      svg.onload = () => {
+        // Очищаем canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        const svgWidth = 700; // Ширина изображения
+        const svgHeight = 700; // Высота изображения
 
-    // Load and render the SVG
-    const svg = new Image();
-    svg.src = "/Photo.svg"; // Убедитесь, что путь к SVG корректный
-    svg.onload = () => {
-      // Очищаем canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-      const svgWidth = 700; // Ширина изображения
-      const svgHeight = 700; // Высота изображения
-    
-      // Отрисовка SVG на canvas
-      ctx.drawImage(svg, canvas.width / 3 - svgWidth / 2, canvas.height / 2 - svgHeight / 2, svgWidth, svgHeight);
-    
-      // Очищаем массив частиц
-      particlesRef.current = [];
-    
-      // Извлечение данных пикселей
-      const imageData = ctx.getImageData(
-        canvas.width / 3 - svgWidth / 2,
-        canvas.height / 2 - svgHeight / 2,
-        svgWidth,
-        svgHeight
-      );
-    
-      for (let y = 0; y < imageData.height; y += 5) {
-        for (let x = 0; x < imageData.width; x += 5) {
-          const r = imageData.data[(y * 4 * imageData.width) + (x * 4)];
-          const g = imageData.data[(y * 4 * imageData.width) + (x * 4) + 1];
-          const b = imageData.data[(y * 4 * imageData.width) + (x * 4) + 2];
-          const alpha = (r + g + b) / 3;
-          if (alpha > 146) {
-            const posX = canvas.width / 3 - svgWidth / 2 + x;
-            const posY = canvas.height / 2 - svgHeight / 2 + y;
-            particlesRef.current.push(new Particle(posX, posY));
+        // Отрисовка SVG на canvas
+        ctx.drawImage(svg, canvas.width / 3 - svgWidth / 2, canvas.height / 2 - svgHeight / 2, svgWidth, svgHeight);
+
+        // Очищаем массив частиц
+        particlesRef.current = [];
+
+        // Извлечение данных пикселей
+        const imageData = ctx.getImageData(
+          canvas.width / 3 - svgWidth / 2,
+          canvas.height / 2 - svgHeight / 2,
+          svgWidth,
+          svgHeight
+        );
+
+        for (let y = 0; y < imageData.height; y += 5) {
+          for (let x = 0; x < imageData.width; x += 5) {
+            const r = imageData.data[(y * 4 * imageData.width) + (x * 4)];
+            const g = imageData.data[(y * 4 * imageData.width) + (x * 4) + 1];
+            const b = imageData.data[(y * 4 * imageData.width) + (x * 4) + 2];
+            const alpha = (r + g + b) / 3;
+            if (alpha > 146) {
+              const posX = canvas.width / 3 - svgWidth / 2 + x;
+              const posY = canvas.height / 2 - svgHeight / 2 + y;
+              particlesRef.current.push(new Particle(posX, posY));
+            }
           }
         }
-      }
-    
-      // Запускаем анимацию
-      animate();
+
+        // Запускаем анимацию
+        animate();
+      };
     };
+
+    setCanvasSize();
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -126,7 +133,7 @@ const InteractiveImageCanvas = () => {
         particle.draw(ctx);
       }
 
-      requestAnimationFrame(animate);
+      animationFrameIdRef.current = requestAnimationFrame(animate);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -139,9 +146,20 @@ const InteractiveImageCanvas = () => {
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("resize", setCanvasSize);
 
     return () => {
+      // Удаляем обработчики событий
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", setCanvasSize);
+
+      // Останавливаем анимацию
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
+
+      // Очищаем частицы
+      particlesRef.current = [];
     };
   }, []);
 

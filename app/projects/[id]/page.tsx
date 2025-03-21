@@ -40,8 +40,8 @@ export default function ProjectDetails() {
       {!isMobile && <CanvasBG/>}
           <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
-            <span className="absolute bottom-0 left-0 w-full h-[6px] bg-white animate-border"></span>
-            <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
+            <span className="absolute bottom-0 left-0 w-full h-[6px] r bg-white animate-border"></span>
+            <span className="absolute inset-0 bg-white opacity-0 rounded-sm animate-fillBackground"></span>
             <h1 className="text-5xl w-[100%] font-bold uppercase leading-tight mix-blend-difference md:w-[650px] md:text-7xl mt-2 mb-2 md: tracking-widest">
             {project.title}
             </h1>
@@ -99,7 +99,7 @@ export default function ProjectDetails() {
               ></iframe>
                 <button
                     onClick={() => setShowIframe(false)}
-                    className="absolute top-10 left-1/2 text-3xl  transform -translate-x-1/2 -translate-y-1/2 bg-black text-white px-3 py-3 rounded-full hover:bg-white hover:text-black  hover:px-5 transition-all duration-300 ease-in-out"
+                    className="absolute top-10 left-1/2 text-3xl  transform -translate-x-1/2 -translate-y-1/2 bg-black text-white px-3 py-3 rounded-full hover:bg-white hover:text-black  hover:px-5 transition-transform duration-300 ease-in-out"
                 >
                     X
                 </button>

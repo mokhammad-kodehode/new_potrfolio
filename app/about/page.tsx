@@ -53,10 +53,10 @@ export default function About() {
                   ABOUT ME
                 </h1>
               </span>
-              <p className={`mt-4 opacity-70 text-[20px] ${isMobile ? "text-sm" : ""} z-10`}>
+              <p className={`mt-4 opacity-70 mix-blend-difference text-[20px] ${isMobile ? "text-sm" : ""} z-10`}>
               My name is Mohammad, and I am a passionate front-end developer. Since early 2023, I’ve been part of an intensive Kodehode course, where I quickly mastered full-stack development. Coding has become more than a profession for me—it’s a way of life.
             </p>
-            <p className={`mt-4 opacity-70 text-[20px] ${isMobile ? "text-sm" : ""}`}>
+            <p className={`mt-4 opacity-70 mix-blend-difference text-[20px] ${isMobile ? "text-sm" : ""}`}>
               Previously, I was an entrepreneur with several successful projects in the service and entertainment industries, gaining valuable experience in marketing and business management. Now, I aim to combine my technical and entrepreneurial skills to create impactful projects.
             </p>
             <p className={` relative mt-4 mix-blend-difference opacity-70 text-[20px] ${isMobile ? "text-sm" : ""} `}>
