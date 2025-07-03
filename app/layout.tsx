@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono,Quicksand } from "next/font/google";
 import Navbar from "./components/navbar";
 import "./globals.css";
 import MouseFollower from "./components/mouseFollower";
-import ThemeProvider from "./components/themeSwitcher";
+import { ThemeProvider } from "./components/themeSwitcher";
+import PageTransition from "./components/PageTransiction";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'], // что реально нужно
+  variable: '--font-quicksand',               // CSS-переменная
+});
+
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -28,12 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${quicksand.variable} antialiased`}
       >
         <ThemeProvider>
         <Navbar/>
         <MouseFollower />
-        {children}
+        <PageTransition>{children}</PageTransition>
         </ThemeProvider>
       </body>
     </html>

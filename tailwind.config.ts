@@ -13,10 +13,10 @@ export default {
           '0%': { transform: 'scale(1.5)', opacity: '0.5' },
         '100%': { transform: 'scale(1)', opacity: '1' },
         },
-        borderExpand: {
-          "0%": { width: "0" },
-          "100%": { width: "100%" },
-        },
+          borderExpand: {
+            "0%":  { transform: "scaleX(0)" },
+            "100%":{ transform: "scaleX(1)" },
+          },
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(10px) scale(0.9)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
@@ -31,17 +31,19 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         fillBackground: {
-          "0%": { height: "2px", top: "100%", opacity: "1" },
-          "100%": { height: "50%", top: "0", opacity: "1" },
-        },
-        marqueeLeft: {
-          "0%": { transform: "translateX(100%)" },
-          "100%": { transform: "translateX(-140%)" },
-        },
-        marqueeRight: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(100%)" },
-        },
+            "0%": { transform: "scaleY(0)", transformOrigin: "bottom", opacity: "1" },
+            "50%": { transform: "scaleY(1)", transformOrigin: "bottom", opacity: "1" },
+            "75%": { transform: "scaleY(1)", transformOrigin: "top", opacity: "1" },
+            "100%": { transform: "scaleY(0.02)", transformOrigin: "top", opacity: "1" },
+          },
+          marqueeLeft: {
+            "0%": { transform: "translateX(100%)"  },
+            "100%":{ transform: "translateX(-100%)" },
+          },
+          marqueeRight: {
+            "0%": { transform: "translateX(-100%)" },
+            "100%":{ transform: "translateX(100%)"  },
+          },
         textWipe: {
           "0%": {opacity: "0", clipPath: "inset(100% 100% 0 0)" },
           "50%": { clipPath: "inset(0  100% 100% 100%)" },
@@ -52,6 +54,18 @@ export default {
           "50%": { clipPath: "inset(0 0 0 0)", opacity: "0" },
           "100%": { opacity: "1", clipPath: "inset(0 0 0 0)" },
         },
+              revealText: {
+        '0%': { 'clip-path': 'inset(100% 0 0 0)' },
+        '100%': { 'clip-path': 'inset(0 0 0 0)' },
+      },
+          growX: {
+          '0%': { transform: 'scaleX(0)', transformOrigin: 'left' },
+          '100%': { transform: 'scaleX(1)', transformOrigin: 'left' },
+        },
+        shrinkX: {
+          '0%': { transform: 'scaleX(1)', transformOrigin: 'left' },
+          '100%': { transform: 'scaleX(0)', transformOrigin: 'left' },
+        },
       },
       animation: {
         scaleOut: 'scaleOut 1s ease-out forwards',
@@ -59,11 +73,14 @@ export default {
         fadeInUp: 'fadeInUp 0.8s ease-out forwards',
         textWipe: "textWipe .5s ease-in-out forwards",
         textReturn: "textReturn 1s ease-in-out forwards",
-        fillBackground: "fillBackground 0.6s ease-out 0.6s forwards",
-        fadeIn: "textFadeIn 0.6s ease-out 0.6s forwards",
+        'reveal-text': 'revealText 3s cubic-bezier(.8,0,.2,1) forwards',
+        fillBackground: "fillBackground 1s ease-out 1s forwards",
+        fadeIn: "textFadeIn 1s ease-out 1s forwards",
         fadeInout: "textFadeInProjects 0.5s ease-out 0.5s forwards",
         "marquee-left": "marqueeLeft 30s linear infinite",
         "marquee-right": "marqueeRight 10s linear infinite",
+        growX: 'growX 0.35s ease-out forwards',
+        shrinkX: 'shrinkX 0.35s ease-in forwards',
       },
       colors: {
         // Define custom colors for themes
@@ -80,6 +97,12 @@ export default {
           gradientEnd: "#ec4899",  // Pink
           text: "#ffffff",
         },
+      },
+
+            fontFamily: {
+        // теперь доступно через класс font-quicksand
+        quicksand: ['var(--font-quicksand)'],
+        geistMono: ['Geist Mono', 'monospace'],
       },
       backgroundImage: {
         // Add custom gradient for the color theme

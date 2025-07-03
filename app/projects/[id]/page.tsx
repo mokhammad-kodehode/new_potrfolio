@@ -2,11 +2,16 @@
 
 import { useParams } from "next/navigation";
 import projects from "@/app/data/projects";
-import PageTransition from "@/app/components/PageTransiction";
 import { useState, useEffect } from "react";
 import { FaGithub } from "react-icons/fa";
-import CanvasBG from "@/app/components/canvas/canvasBG";
+import dynamic from "next/dynamic"; 
 import Link from "next/link";
+import { useRef } from "react";
+
+  const CanvasBG = dynamic(() => import("@/app/components/canvas/canvasBG"), {
+  ssr: false,
+  loading: () => <div className="sr-only">Loading background…</div>,
+});
 
 
 export default function ProjectDetails() {
@@ -14,6 +19,35 @@ export default function ProjectDetails() {
   const project = projects.find((proj) => proj.id === id);
   const [showIframe, setShowIframe] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+
+
+// Ленивый загрузчик канваса с сохранением положения
+function LazyCanvasBG() {
+  const [show, setShow] = useState(false);
+  const holderRef = useRef<HTMLDivElement>(null); // вот это обязательно
+
+  useEffect(() => {
+    const el = holderRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShow(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return <div ref={holderRef}>{show && <CanvasBG />}</div>;
+}
+
   
   useEffect(() => {
     const handleResize = () => {
@@ -35,20 +69,24 @@ export default function ProjectDetails() {
   }
 
   return (
-    <PageTransition>
+    <>
       <div className="min-h-screen flex flex-col justify-center items-center  text-white px-6 md:px-12 py-8 md:py-16">
-      {!isMobile && <CanvasBG/>}
+      {!isMobile && (
+      <div className="absolute inset-0 -z-10 w-full h-full">
+        <LazyCanvasBG />
+      </div>
+    )}
           <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
-            <span className="absolute bottom-0 left-0 w-full h-[6px] r bg-white animate-border"></span>
-            <span className="absolute inset-0 bg-white opacity-0 rounded-sm animate-fillBackground"></span>
-            <h1 className="text-5xl w-[100%] font-bold uppercase leading-tight mix-blend-difference md:w-[650px] md:text-7xl mt-2 mb-2 md: tracking-widest">
+            <span className="absolute bottom-0 left-0 w-full h-[6px] r bg-[--text-color] animate-border"></span>
+            <span className="absolute inset-0 bg-[--text-color] opacity-0 rounded-sm animate-fillBackground"></span>
+            <h1 className="text-5xl animate-reveal-text w-[100%] font-bold uppercase leading-tight text-[--text-color] md:w-[650px] md:text-7xl mt-2 mb-2 md: tracking-widest">
             {project.title}
             </h1>
           </div>
         </div>
 
-        <p className="text-base md:text-lg text-center w-full md:w-[750px] mb-8 opacity-70">
+        <p className="text-base text-[--text-color] md:text-lg text-center w-full md:w-[750px] mb-8 opacity-70">
           {project.description_two}
         </p>
         <div className="flex flex-wrap justify-center gap-3 mb-12">
@@ -66,7 +104,7 @@ export default function ProjectDetails() {
           href={project.github}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white text-xl md:text-3xl mb-5 flex items-center gap-2"
+          className="text-[--text-color] text-xl md:text-3xl mb-5 flex items-center gap-2"
         >
           <FaGithub /> GitHub
         </a>
@@ -109,11 +147,11 @@ export default function ProjectDetails() {
 
         {/* Кнопка возврата */}
         <div className="mt-12 text-center">
-          <Link href="/projects" className="text-white underline">
+          <Link href="/projects" className="text-[--text-color] underline">
             ← Back to Projects
           </Link>
         </div>
       </div>
-    </PageTransition>
+    </>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PageTransition from "../components/PageTransiction";
 import Image from "next/image";
 import Link from "next/link";
 import projects from "../data/projects";
@@ -79,14 +78,14 @@ export default function Projects() {
   }, [mousePosition]);
 
   return (
-    <PageTransition>
+    <>
       <div className="min-h-screen  text-white px-12 py-8 md:py-16 relative">
         {/* Centered Title Section */}
         <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
             <span className="absolute bottom-0 left-0 w-full h-[6px] bg-white animate-border"></span>
             <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
-            <h1 className="text-5xl mix-blend-difference md:text-8xl font-bold mt-2 mb-2 md: tracking-widest">
+            <h1 className="text-5xl  text-[--text-color] animate-reveal-text  md:text-8xl font-bold mt-2 mb-2 md: tracking-widest">
               PROJECTS
             </h1>
           </div>
@@ -96,7 +95,7 @@ export default function Projects() {
           {projects.map((project, index) => (
             <Link href={project.link} key={index} passHref>
               <div
-                className={`group relative bg-black w-full bg- overflow-hidden rounded-sm  cursor-pointer transition-all duration-700 transform hover:bg-white ${
+                className={`group relative bg-black w-full bg- overflow-hidden rounded-sm  cursor-pointer transition-all duration-300 transform hover:bg-white ${
                   visibleProjects > index
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
@@ -156,6 +155,6 @@ export default function Projects() {
           </div>
         )}
       </div>
-    </PageTransition>
+    </>
   );
 }

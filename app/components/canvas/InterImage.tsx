@@ -1,165 +1,207 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-interface ParticleProps {
-  x: number;
-  y: number;
-  size: number;
-  baseX: number;
-  baseY: number;
-  density: number;
-}
+/* ───────── настройки ───────── */
+const STEP = 6;
+const PHOTO_SIZE = 650;
+const BASE_SIZE = 2;
+const JITTER_POS = 1;
+const JITTER_SIZE = 1;
+const TARGET_FPS = 30;
+const MOUSE_R = 240;
+const BRIGHT_K = 1.4;
+const CONTRAST = 30;
+const BURST_FORCE = 6;
 
-class Particle implements ParticleProps {
-  x: number;
-  y: number;
-  size: number;
-  baseX: number;
-  baseY: number;
-  density: number;
+/* ───────── типы / класс ───────── */
+type Mouse = { x: number | null; y: number | null };
 
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-    this.size = 3; // Увеличим размер частиц для лучшей видимости
-    this.baseX = this.x;
-    this.baseY = this.y;
-    this.density = Math.random() * 5 + 1;
+class Particle {
+  x: number; y: number; baseX: number; baseY: number;
+  vx = 0; vy = 0; size: number; color: string; alpha = 1;
+
+  constructor(x: number, y: number, color: string, size: number) {
+    this.x = this.baseX = x;
+    this.y = this.baseY = y;
+    this.size = size;
+    this.color = color;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.closePath();
     ctx.fill();
+    ctx.globalAlpha = 1;
   }
 
-  update(mouse: { x: number | null; y: number | null; radius: number }) {
-    if (!mouse.x || !mouse.y) return;
+  update(mouse: Mouse) {
+    if (mouse.x != null && mouse.y != null) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const dist = Math.hypot(dx, dy);
 
-    const dx = mouse.x - this.x;
-    const dy = mouse.y - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    const force = (mouse.radius - distance) / mouse.radius;
-    const directionX = (dx / distance) * force * this.density;
-    const directionY = (dy / distance) * force * this.density;
-
-    if (distance < mouse.radius + this.size) {
-      this.x -= directionX;
-      this.y -= directionY;
-    } else {
-      if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 10;
-      if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 10;
+      if (dist < MOUSE_R) {
+        const f = (MOUSE_R - dist) / MOUSE_R;
+        const angle = Math.atan2(dy, dx);
+        this.vx -= Math.cos(angle) * f * 2;
+        this.vy -= Math.sin(angle) * f * 2;
+        this.alpha = 1; // вспышка
+      }
     }
+
+    /* трение + возврат */
+    this.vx *= 0.92;
+    this.vy *= 0.92;
+    this.x += this.vx;
+    this.y += this.vy;
+    const dx0 = this.x - this.baseX;
+    const dy0 = this.y - this.baseY;
+    this.vx -= dx0 * 0.02;
+    this.vy -= dy0 * 0.02;
+
+    /* лёгкое затухание */
+    if (Math.abs(this.vx) + Math.abs(this.vy) < 0.5) {
+      this.alpha = Math.max(0.25, this.alpha - 0.02);
+    }
+  }
+
+  burst(cx: number, cy: number) {
+    const dx = this.x - cx;
+    const dy = this.y - cy;
+    const d = Math.hypot(dx, dy) || 1;
+    const k = BURST_FORCE * (0.6 + Math.random() * 0.4);
+    this.vx += (dx / d) * k;
+    this.vy += (dy / d) * k;
+    this.alpha = 1;
   }
 }
 
-const InteractiveImageCanvas = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
-  const mouseRef = useRef({ x: null as number | null, y: null as number | null, radius: 150 });
-  const animationFrameIdRef = useRef<number | null>(null);
+/* ───────── компонент ───────── */
+export default function InteractiveImageCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const partsRef = useRef<Particle[]>([]);
+  const mouseRef = useRef<Mouse>({ x: null, y: null });
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) {
-      console.error("2D context not available");
-      return;
-    }
+    if (!ctx) return;
 
-    // Устанавливаем размер canvas
-    const setCanvasSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles(); // Пересоздаем частицы при изменении размера
-    };
+    /* ---------- генерация частиц ---------- */
+    const build = () => {
+      partsRef.current = [];
 
-    // Инициализируем частицы
-    const initParticles = () => {
-      const svg = new Image();
-      svg.src = "/Photo.svg"; // Убедитесь, что путь к SVG корректный
-      svg.onload = () => {
-        // Очищаем canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const img = new Image();
+      img.src = "/Photo.svg";
+      img.onload = () => {
+        const W = PHOTO_SIZE;
+        const H = PHOTO_SIZE;
+        const x0 = canvas.width / 3 - W / 2;
+        const y0 = canvas.height / 2 - H / 2;
 
-        const svgWidth = 700; // Ширина изображения
-        const svgHeight = 700; // Высота изображения
+        ctx.drawImage(img, x0, y0, W, H);
+        const data = ctx.getImageData(x0, y0, W, H);
 
-        // Отрисовка SVG на canvas
-        ctx.drawImage(svg, canvas.width / 3 - svgWidth / 2, canvas.height / 2 - svgHeight / 2, svgWidth, svgHeight);
+        for (let y = 0; y < data.height; y += STEP) {
+          for (let x = 0; x < data.width; x += STEP) {
+            const idx = (y * 4 * data.width) + x * 4;
+            const a = data.data[idx + 3];
+            if (a < 40) continue;
 
-        // Очищаем массив частиц
-        particlesRef.current = [];
+            let r = data.data[idx] * BRIGHT_K + CONTRAST;
+            let g = data.data[idx + 1] * BRIGHT_K + CONTRAST;
+            let b = data.data[idx + 2] * BRIGHT_K + CONTRAST;
+            r = Math.min(255, r);
+            g = Math.min(255, g);
+            b = Math.min(255, b);
 
-        // Извлечение данных пикселей
-        const imageData = ctx.getImageData(
-          canvas.width / 3 - svgWidth / 2,
-          canvas.height / 2 - svgHeight / 2,
-          svgWidth,
-          svgHeight
-        );
+            const jx = (Math.random() * 2 - 1) * JITTER_POS;
+            const jy = (Math.random() * 2 - 1) * JITTER_POS;
+            const size = BASE_SIZE + Math.random() * JITTER_SIZE;
 
-        for (let y = 0; y < imageData.height; y += 5) {
-          for (let x = 0; x < imageData.width; x += 5) {
-            const r = imageData.data[(y * 4 * imageData.width) + (x * 4)];
-            const g = imageData.data[(y * 4 * imageData.width) + (x * 4) + 1];
-            const b = imageData.data[(y * 4 * imageData.width) + (x * 4) + 2];
-            const alpha = (r + g + b) / 3;
-            if (alpha > 146) {
-              const posX = canvas.width / 3 - svgWidth / 2 + x;
-              const posY = canvas.height / 2 - svgHeight / 2 + y;
-              particlesRef.current.push(new Particle(posX, posY));
-            }
+            partsRef.current.push(
+              new Particle(x0 + x + jx, y0 + y + jy, `rgb(${r},${g},${b})`, size)
+            );
           }
         }
 
-        // Запускаем анимацию
-        animate();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        loop(performance.now());
       };
     };
 
-    setCanvasSize();
+    /* ---------- throttle-loop ---------- */
+    let prev = 0;
+    const loop = (t: number) => {
+      if (t - prev > 1000 / TARGET_FPS) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        /* glow-режим */
+        ctx.globalCompositeOperation = "lighter";
+        partsRef.current.forEach(p => {
+          p.update(mouseRef.current);
+          p.draw(ctx);
+        });
+        ctx.globalCompositeOperation = "source-over";
 
-      for (const particle of particlesRef.current) {
-        particle.update(mouseRef.current);
-        particle.draw(ctx);
+        prev = t;
       }
-
-      animationFrameIdRef.current = requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(loop);
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    /* ---------- events ---------- */
+    const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-
-      mouseRef.current.x = (e.clientX - rect.left) * scaleX;
-      mouseRef.current.y = (e.clientY - rect.top) * scaleY;
+      mouseRef.current.x = (e.clientX - rect.left) * canvas.width / rect.width;
+      mouseRef.current.y = (e.clientY - rect.top) * canvas.height / rect.height;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", setCanvasSize);
+    const onClick = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) * canvas.width / rect.width;
+      const cy = (e.clientY - rect.top) * canvas.height / rect.height;
+      partsRef.current.forEach(p => p.burst(cx, cy));
+    };
 
+    const resize = () => {
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+      build();
+    };
+
+    /* IntersectionObserver — пауза */
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!rafRef.current) rafRef.current = requestAnimationFrame(loop);
+        } else if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(canvas);
+
+    /* init */
+    resize();
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("click", onClick);
+    window.addEventListener("resize", resize);
+
+    /* cleanup */
     return () => {
-      // Удаляем обработчики событий
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", setCanvasSize);
-
-      // Останавливаем анимацию
-      if (animationFrameIdRef.current) {
-        cancelAnimationFrame(animationFrameIdRef.current);
-      }
-
-      // Очищаем частицы
-      particlesRef.current = [];
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("click", onClick);
+      window.removeEventListener("resize", resize);
+      io.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      partsRef.current = [];
     };
   }, []);
 
@@ -167,16 +209,13 @@ const InteractiveImageCanvas = () => {
     <canvas
       ref={canvasRef}
       style={{
-        display: "block",
         position: "absolute",
-        top: 0,
-        left: 0,
+        inset: 0,
         width: "100%",
         height: "100%",
-        zIndex: "-1",
+        display: "block",
+        zIndex: -1,
       }}
     />
   );
-};
-
-export default InteractiveImageCanvas;
+}

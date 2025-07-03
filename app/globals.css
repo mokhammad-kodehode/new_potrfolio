@@ -17,7 +17,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+    --headline-color: #fff;
+  --stripe-bg: #fff;
 }
+
+
 
 ::-webkit-scrollbar {
     width: 8px; /* Ширина скроллбара */
@@ -47,18 +51,24 @@
 .whiteBlack {
   --bg-color: #ededed;
   --text-color: #161414;
+  --switch-color: #161414;
+  --border-color: #161414;
 }
 
 /* Dark theme */
 .blackWhite {
   --bg-color: #0a0a0a;
   --text-color: #ffffff;
+   --switch-color: #555272;
+   --border-color: #ffffff;
 }
 
 /* Custom theme */
 .customColor {
-  --bg-color: linear-gradient(to right, #4f46e5, #ec4899); /* Gradient background */
-  --text-color: #1b1818;
+  --bg-color: linear-gradient(to right, #555272, #524e71, #4e4a70, #4b476f, #47436e, #45416a, #423e66, #403c62, #3e3b5b, #3b3954, #39384d, #373646); /* Gradient background */
+  --text-color: #ffffff;
+   --switch-color: #ffffff;
+    --border-color: #FEC342;
 }
 
 body {

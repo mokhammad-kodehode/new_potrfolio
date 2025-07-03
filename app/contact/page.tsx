@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PageTransition from "../components/PageTransiction";
 
 export default function ContactPage() {
   const [visibleInputs, setVisibleInputs] = useState<number>(0);
@@ -18,7 +17,7 @@ export default function ContactPage() {
   }, []);
 
   return (
-    <PageTransition>
+    <>
       <div className="min-h-screen bg-black text-white px-6 py-8 md:py-16 flex flex-col items-center justify-center">
         {/* Title Section */}
         <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
@@ -101,6 +100,6 @@ export default function ContactPage() {
           </button>
         </form>
       </div>
-    </PageTransition>
+    </>
   );
 }

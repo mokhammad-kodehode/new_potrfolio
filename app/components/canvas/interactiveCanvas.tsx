@@ -1,162 +1,178 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import "./canvasInter.css";
+import { useTheme } from "../themeSwitcher";
 
-interface ParticleProps {
-  x: number;
-  y: number;
-  size: number;
-  baseX: number;
-  baseY: number;
-  density: number;
-}
-
-class Particle implements ParticleProps {
-  x: number;
-  y: number;
-  size: number;
-  baseX: number;
-  baseY: number;
-  density: number;
+/* ────────── класс частицы ────────── */
+class Particle {
+  x: number; y: number; size = 8;
+  baseX: number; baseY: number; density: number;
+  /* временный цвет-вспышка */
+  flashColor: string | null = null;
+  flashLife = 0;
 
   constructor(x: number, y: number) {
     this.x = x + 200;
     this.y = y - 100;
-    this.size = 8;
     this.baseX = this.x;
     this.baseY = this.y;
-    this.density = Math.random() * 20 + 1;
+    this.density = Math.random() * 20 + 1;  // ← старая “масса”
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "white";
+  draw(ctx: CanvasRenderingContext2D, baseColor: string) {
+    ctx.fillStyle = this.flashColor ?? baseColor;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.closePath();
     ctx.fill();
   }
 
   update(mouse: { x: number | null; y: number | null; radius: number }) {
-    if (!mouse.x || !mouse.y) return;
+    /* старая «магия» вокруг курсора */
+    if (mouse.x != null && mouse.y != null) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < mouse.radius + this.size) {
+        const f = (mouse.radius - dist) / mouse.radius;
+        this.x -= (dx / dist) * f * this.density;
+        this.y -= (dy / dist) * f * this.density;
+      }
+    }
+    /* возврат к исходной позиции */
+    this.x -= (this.x - this.baseX) / 10;
+    this.y -= (this.y - this.baseY) / 10;
 
-    const dx = mouse.x - this.x;
-    const dy = mouse.y - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    /* затухание вспышки */
+    if (this.flashLife > 0 && --this.flashLife === 0) this.flashColor = null;
+  }
 
-    const force = (mouse.radius - distance) / mouse.radius;
-    const directionX = (dx / distance) * force * this.density;
-    const directionY = (dy / distance) * force * this.density;
+  /** импульс + случайная подсветка */
+  burst(cx: number, cy: number) {
+    const dx = this.x - cx, dy = this.y - cy, d = Math.hypot(dx, dy) || 1;
+    const k = 6;                    // сила разлёта
+    this.x += (dx / d) * k;
+    this.y += (dy / d) * k;
 
-    if (distance < mouse.radius + this.size) {
-      this.x -= directionX;
-      this.y -= directionY;
-    } else {
-      if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 10;
-      if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 10;
+    /* 25 % точек становятся цветными */
+    if (Math.random() < 0.25) {
+      const hue = Math.floor(Math.random() * 360);
+      this.flashColor = `hsl(${hue} 100% 60%)`;
+      this.flashLife = 40;          // ≈ 0.7 с при 60 fps
     }
   }
 }
 
-const InteractiveCanvas = () => {
+/* ────────── компонент ────────── */
+export default function InteractiveCanvas() {
+  const { theme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const mouseRef = useRef({ x: null as number | null, y: null as number | null, radius: 150 });
-  const animationFrameIdRef = useRef<number | null>(null);
+  const mouse = useRef({ x: null as number | null, y: null as number | null, radius: 150 });
+  const rafRef = useRef<number | null>(null);
+  const baseColor = useRef("white");
+
+  /* цвет зависит от темы */
+  useEffect(() => {
+    baseColor.current =
+      theme === "light" ? "black" : theme === "color" ? "#FEC342" : "white";
+  }, [theme]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) {
-      console.error("2D context not available");
-      return;
-    }
+    if (!ctx) return;
 
-    // Устанавливаем размер canvas
-    const setCanvasSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles(); // Пересоздаем частицы при изменении размера
-    };
-
-    // Инициализируем частицы
-    const initParticles = () => {
+    /* ── создаём частицы из текста ── */
+    const build = () => {
       particlesRef.current = [];
-      ctx.font = "bold 13px Verdana";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "bold 16px Verdana";
       ctx.fillText("MOHAMMAD", 5, 30);
       const data = ctx.getImageData(0, 0, canvas.width, 100);
-
-      const adjustX = -10;
-      const adjustY = -7;
+      const ax = -10, ay = -7;
 
       for (let y = 0; y < data.height; y++) {
         for (let x = 0; x < data.width; x++) {
-          if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
-            const positionX = x + adjustX;
-            const positionY = y + adjustY;
-            particlesRef.current.push(new Particle(positionX * 15, positionY * 15));
+          if (data.data[(y * 4 * data.width) + x * 4 + 3] > 128) {
+            particlesRef.current.push(
+              new Particle((x + ax) * 15, (y + ay) * 15)
+            );
           }
         }
       }
     };
 
-    setCanvasSize();
-
-    const animate = () => {
+    /* ── рендер-цикл ── */
+    const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (const particle of particlesRef.current) {
-        particle.update(mouseRef.current);
-        particle.draw(ctx);
-      }
-
-      animationFrameIdRef.current = requestAnimationFrame(animate);
+      const col = baseColor.current;
+      particlesRef.current.forEach(p => {
+        p.update(mouse.current);
+        p.draw(ctx, col);
+      });
+      rafRef.current = requestAnimationFrame(draw);
     };
 
-    animate();
-
-    // Функция обновления позиции мыши
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-
-      mouseRef.current.x = (e.clientX - rect.left) * scaleX;
-      mouseRef.current.y = (e.clientY - rect.top) * scaleY;
+    /* ── helpers ── */
+    const resize = () => {
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+      build();
     };
-
-    // Debounce для resize
-    const debounce = (func: () => void, delay: number) => {
-      let timeoutId: NodeJS.Timeout;
-      return () => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(func, delay);
+    const getPos = (clientX: number, clientY: number) => {
+      const r = canvas.getBoundingClientRect();
+      return {
+        x: (clientX - r.left) * canvas.width / r.width,
+        y: (clientY - r.top) * canvas.height / r.height,
       };
     };
 
-    const debouncedSetCanvasSize = debounce(setCanvasSize, 100);
-
-    // Добавляем обработчики событий
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", debouncedSetCanvasSize);
-
-    return () => {
-      // Удаляем обработчики событий
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", debouncedSetCanvasSize);
-
-      // Останавливаем анимацию
-      if (animationFrameIdRef.current) {
-        cancelAnimationFrame(animationFrameIdRef.current);
+    /* ── события ── */
+    const move = (e: MouseEvent) => {
+      Object.assign(mouse.current, getPos(e.clientX, e.clientY));
+    };
+    const click = (e: MouseEvent) => {
+      const { x: cx, y: cy } = getPos(e.clientX, e.clientY);
+      particlesRef.current.forEach(p => p.burst(cx, cy));
+    };
+    const tap = (e: TouchEvent) => {
+      if (e.touches.length) {
+        const { clientX, clientY } = e.touches[0];
+        const { x: cx, y: cy } = getPos(clientX, clientY);
+        particlesRef.current.forEach(p => p.burst(cx, cy));
       }
+    };
 
-      // Очищаем частицы
-      particlesRef.current = [];
+    /* ── старт ── */
+    resize();
+
+    /* пауза, если блока не видно */
+    const io = new IntersectionObserver(
+      ([ent]) =>
+        ent.isIntersecting
+          ? (rafRef.current ??= requestAnimationFrame(draw))
+          : (rafRef.current && (cancelAnimationFrame(rafRef.current), rafRef.current = null)),
+      { threshold: 0.1 }
+    );
+    io.observe(canvas);
+
+    window.addEventListener("mousemove", move);
+    window.addEventListener("click", click);
+    window.addEventListener("touchstart", tap, { passive: true });
+    window.addEventListener("resize", resize);
+
+    /* ── cleanup ── */
+    return () => {
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("click", click);
+      window.removeEventListener("touchstart", tap);
+      window.removeEventListener("resize", resize);
+      io.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
   return <canvas ref={canvasRef} className="canvas" />;
-};
-
-export default InteractiveCanvas;
+}

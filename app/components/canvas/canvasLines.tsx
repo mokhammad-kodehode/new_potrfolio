@@ -1,56 +1,85 @@
 "use client";
+
 import { useEffect, useRef } from "react";
+import { useTheme } from "../themeSwitcher"; // исправь путь, если нужно
 
-const CanvasAnimationNew = () => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+export default function CanvasAnimationNew() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { theme } = useTheme();
+  const rafRef = useRef<number | null>(null);
+  const strokeRef = useRef<string>("#FFFFFF");
+  const wavesRef = useRef<any[]>([]);
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas?.getContext("2d");
+  useEffect(() => {
+    if (theme === "light")  strokeRef.current = "#000000";
+    if (theme === "dark")   strokeRef.current = "#FFFFFF";
+    if (theme === "color")  strokeRef.current = "#FFFFFF";
+  }, [theme]);
 
-        if (!canvas || !ctx) return;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
-        const waveCount = 5;
-        const waves = Array.from({ length: waveCount }).map((_, index) => ({
-            waveHeight: Math.random() * 80 + 100,  // Increased height for bigger curves
-            waveLength: Math.random() * 0.003 + 0.002, // Stretched wave length for smoother curves
-            speed: Math.random() * 0.0009 + 0.00001,  // Slowed down movement
-            offset: Math.random() * Math.PI * 2,
-            frequency: Math.random() * 0.8 + 0.5, // Reduced frequency for slower secondary waves
-            verticalOffset: index * 150, // Bigger distance between lines
-        }));
+    // ОПТИМИЗАЦИЯ: меньше волн + шаг
+    const waveCount = 3; // (или 4, если нужно)
+    const step = 4; // попробуй от 3 до 6 — чем больше, тем быстрее
 
-        const drawWaves = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    wavesRef.current = Array.from({ length: waveCount }).map((_, i) => ({
+      waveHeight: 100 + Math.random() * 80,
+      waveLength: 0.002 + Math.random() * 0.003,
+      speed:      0.00001 + Math.random() * 0.0009,
+      offset:     Math.random() * Math.PI * 2,
+      frequency:  0.5 + Math.random() * 0.8,
+      verticalOffset: i * 150,
+    }));
 
-            waves.forEach((wave, index) => {
-                ctx.beginPath();
-                ctx.moveTo(0, canvas.height / 3 + wave.verticalOffset);
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                for (let i = 0; i < canvas.width; i++) {
-                    const yOffset =
-                        Math.sin(i * wave.waveLength + wave.offset) * wave.waveHeight +
-                        Math.sin(i * wave.waveLength * wave.frequency + wave.offset * 2) * (wave.waveHeight / 3); 
-                    ctx.lineTo(i, canvas.height / 3 + wave.verticalOffset + yOffset);
-                }
+      wavesRef.current.forEach((w, idx) => {
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 3 + w.verticalOffset);
 
-                ctx.strokeStyle = `rgba(255, 255, 255, ${.9 + index * 0.05})`;
-                ctx.lineWidth = 3.5 + index * 0.5;
-                ctx.stroke();
+        for (let x = 0; x < canvas.width; x += step) {
+          const yOffset =
+            Math.sin(x * w.waveLength + w.offset) * w.waveHeight +
+            Math.sin(x * w.waveLength * w.frequency + w.offset * 2) * (w.waveHeight / 3);
+          ctx.lineTo(x, canvas.height / 3 + w.verticalOffset + yOffset);
+        }
 
-                wave.offset += wave.speed;
-            });
+        ctx.strokeStyle = strokeRef.current;
+        ctx.globalAlpha = 0.9 + idx * 0.05;
+        ctx.lineWidth = 3.5 + idx * 0.5;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
 
-            requestAnimationFrame(drawWaves);
-        };
+        w.offset += w.speed;
+      });
 
-        drawWaves();
-    }, []);
+      rafRef.current = requestAnimationFrame(draw);
+    };
 
-    return <canvas ref={canvasRef} className="absolute bottom-0 left-0 opacity-[0.08] w-full h-full" />;
-};
+    rafRef.current = requestAnimationFrame(draw);
 
-export default CanvasAnimationNew;
+    return () => {
+      window.removeEventListener("resize", resize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [theme]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute bottom-0 left-0 opacity-[0.1] w-full h-full"
+    />
+  );
+}

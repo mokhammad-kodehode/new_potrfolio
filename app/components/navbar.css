@@ -9,6 +9,19 @@
   transform: scale(1.1);
 }
 
+.menu-item::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:0;
+  height:26px;             /* толщина полосы */
+  background:#fff;
+  transform:skewX(-8deg);
+  transform-origin:left bottom;
+  transition:width .35s ease;
+  z-index:1;               /* было -1 → стало 1  */
+}
 
 
 .menu-item::before {
@@ -36,4 +49,9 @@
   font-size: 3rem;
   text-align: center;
   transition: all 0.3s ease;
+}
+
+@keyframes growX {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
 }
