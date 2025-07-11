@@ -78,9 +78,9 @@ function LazyCanvasBG() {
     )}
           <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
-            <span className="absolute bottom-0 left-0 w-full h-[6px] r bg-[--text-color] animate-border"></span>
-            <span className="absolute inset-0 bg-[--text-color] opacity-0 rounded-sm animate-fillBackground"></span>
-            <h1 className="text-5xl animate-reveal-text w-[100%] font-bold uppercase leading-tight text-[--text-color] md:w-[650px] md:text-7xl mt-2 mb-2 md: tracking-widest">
+            <span className="absolute bottom-0 left-0 w-full h-[6px] r bg-[--border-color] animate-border"></span>
+            <span className="absolute inset-0 bg-[--border-color] opacity-0 rounded-sm animate-fillBackground"></span>
+            <h1 className="text-5xl animate-reveal-text w-[100%] font-bold uppercase leading-tight text-[--border-color] md:w-[650px] md:text-7xl mt-2 mb-2 md: tracking-widest">
             {project.title}
             </h1>
           </div>

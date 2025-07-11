@@ -79,7 +79,7 @@ const projects = [
       description: "The Calculator App is a web application that provides a simpleand user-friendly interface for performing basic arithmeticoperations.",
       tags: ["JavaScript","HTML", "CSS"],
       image: "/calc.png",
-      link: "/projects/the-age-calculator",
+      link: "/projects/calculator",
       github: "https://github.com/mokhammad-kodehode/calculator.git",
       iframe: "https://mokhammad-kodehode.github.io/calculator/",
       visitLink: "https://mokhammad-kodehode.github.io/calculator/",

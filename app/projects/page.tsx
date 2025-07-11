@@ -83,9 +83,9 @@ export default function Projects() {
         {/* Centered Title Section */}
         <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
-            <span className="absolute bottom-0 left-0 w-full h-[6px] bg-white animate-border"></span>
-            <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
-            <h1 className="text-5xl  text-[--text-color] animate-reveal-text  md:text-8xl font-bold mt-2 mb-2 md: tracking-widest">
+            <span className="absolute bottom-0 left-0 w-full h-[6px] bg-[--border-color] animate-border"></span>
+            <span className="absolute inset-0 bg-[--border-color] opacity-0 animate-fillBackground"></span>
+            <h1 className="text-5xl  text-[--border-color] animate-reveal-text  md:text-8xl font-bold mt-2 mb-2 md: tracking-widest">
               PROJECTS
             </h1>
           </div>

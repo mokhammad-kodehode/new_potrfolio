@@ -1,4 +1,7 @@
+"use client";
+
 import { useEffect, useRef } from "react";
+import { useTheme } from "../themeSwitcher";
 
 interface Shape {
   x: number;
@@ -10,19 +13,20 @@ interface Shape {
 
 const CanvasBG: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { theme } = useTheme();
+  const baseColor = useRef("white");
+
+  useEffect(() => {
+    baseColor.current =
+      theme === "light" ? "black" : theme === "color" ? "#FEC342" : "white";
+  }, [theme]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      console.error("Canvas not found.");
-      return;
-    }
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      console.error("Unable to get 2D context.");
-      return;
-    }
+    if (!ctx) return;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -60,7 +64,6 @@ const CanvasBG: React.FC = () => {
         const distanceY = shape.y + Math.sin(angle) * shape.radius - mouse.y;
         const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2);
 
-        // Сгибание в зависимости от близости мышки
         const interaction =
           distance < mouse.radius
             ? Math.sin(angle * 3 + shape.offset) * 10 + (mouse.radius - distance) * 0.2
@@ -69,17 +72,14 @@ const CanvasBG: React.FC = () => {
         const x = shape.x + Math.cos(angle) * (shape.radius + interaction);
         const y = shape.y + Math.sin(angle) * (shape.radius + interaction);
 
-        if (angle === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+        if (angle === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
-      ctx.closePath();
 
-      ctx.lineWidth = 3; // Толщина границы
-      ctx.strokeStyle = "white"; // Цвет границы
-      ctx.stroke(); // Нарисовать границу
+      ctx.closePath();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = baseColor.current;
+      ctx.stroke();
     };
 
     const animate = () => {
@@ -87,10 +87,7 @@ const CanvasBG: React.FC = () => {
 
       shapes.forEach((shape) => {
         shape.offset += shape.speed;
-
-        // Плавное вертикальное движение
         shape.y += Math.sin(shape.offset) * 0.5;
-
         drawShape(shape);
       });
 
@@ -109,7 +106,7 @@ const CanvasBG: React.FC = () => {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [theme]);
 
   return (
     <canvas

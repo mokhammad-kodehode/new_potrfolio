@@ -85,24 +85,32 @@ export default function InteractiveCanvas() {
     if (!ctx) return;
 
     /* ── создаём частицы из текста ── */
-    const build = () => {
-      particlesRef.current = [];
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.font = "bold 16px Verdana";
-      ctx.fillText("MOHAMMAD", 5, 30);
-      const data = ctx.getImageData(0, 0, canvas.width, 100);
-      const ax = -10, ay = -7;
+const build = () => {
+  particlesRef.current = [];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (let y = 0; y < data.height; y++) {
-        for (let x = 0; x < data.width; x++) {
-          if (data.data[(y * 4 * data.width) + x * 4 + 3] > 128) {
-            particlesRef.current.push(
-              new Particle((x + ax) * 15, (y + ay) * 15)
-            );
-          }
-        }
+ const fontSize = window.innerWidth <= 1600 ? 13 : 16;
+
+  
+  console.log("Текущий размер экрана:", window.innerWidth, "Размер шрифта:", fontSize);
+
+  ctx.font = `bold ${fontSize}px Verdana`;
+  ctx.fillText("MOHAMMAD", 5, 30);
+
+  const data = ctx.getImageData(0, 0, canvas.width, 100);
+  const ax = -10, ay = -7;
+
+  for (let y = 0; y < data.height; y++) {
+    for (let x = 0; x < data.width; x++) {
+      if (data.data[(y * 4 * data.width) + x * 4 + 3] > 128) {
+        particlesRef.current.push(
+          new Particle((x + ax) * 15, (y + ay) * 15)
+        );
       }
-    };
+    }
+  }
+};
+
 
     /* ── рендер-цикл ── */
     const draw = () => {

@@ -54,10 +54,10 @@ export default function About() {
           {/* Текст / заголовок */}
           <div className="w-full md:w-[680px] px-2 text-center">
             <span className="relative inline-block px-1 ml-2 overflow-hidden">
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[--text-color] origin-lef animate-border  " />
-              <span className="absolute inset-0 bg-white opacity-0 animate-border " />
-              <span className="absolute inset-0 bg-[--text-color] opacity-0 animate-fillBackground" />
-              <span className="block  text-5xl md:text-7xl font-bold leading-tight text-[--text-color] animate-reveal-text ">
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[--border-color] origin-lef animate-border  " />
+              <span className="absolute inset-0 bg-[--border-color] opacity-0 animate-border " />
+              <span className="absolute inset-0 bg-[--border-color] opacity-0 animate-fillBackground" />
+              <span className="block  text-5xl md:text-7xl font-bold leading-tight text-[--border-color]  animate-reveal-text ">
                 ABOUT&nbsp;ME
               </span>
             </span>
