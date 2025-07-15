@@ -18,13 +18,13 @@ export default function ContactPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-black text-white px-6 py-8 md:py-16 flex flex-col items-center justify-center">
+      <div className="min-h-screen  text-white px-6 py-8 md:py-16 flex flex-col items-center justify-center">
         {/* Title Section */}
         <div className="flex justify-center mt-7 mb-10 items-center w-full md:mb-16">
           <div className="relative pl-1 pr-1 inline-block overflow-hidden text-center">
-            <span className="absolute bottom-0 left-0 w-full h-[6px] bg-white animate-border"></span>
-            <span className="absolute inset-0 bg-white opacity-0 animate-fillBackground"></span>
-            <h1 className="text-5xl mix-blend-difference uppercase md:text-8xl font-bold mt-2 mb-2 md: tracking-widest">
+            <span className="absolute bottom-0 left-0 w-full h-[6px] bg-[--border-color] animate-border"></span>
+            <span className="absolute inset-0 bg-[--border-color] opacity-0 animate-fillBackground"></span>
+            <h1 className="text-5xl text-[--border-color] uppercase md:text-8xl font-bold mt-2 mb-2 md: tracking-widest">
               Contact me
             </h1>
           </div>
@@ -48,7 +48,7 @@ export default function ContactPage() {
               placeholder="Your Name"
               required
               autoComplete="name"
-              className="w-full px-4 py-3 bg-transparent border-b-2 border-white text-white  outline-none transition duration-300 focus:scale-105 focus:shadow-lg"
+              className="w-full px-4 py-3 bg-transparent border-b-2 border-[--border-color] text-white  outline-none transition duration-300 focus:scale-105 focus:shadow-lg"
             />
           </div>
 
@@ -68,7 +68,7 @@ export default function ContactPage() {
               placeholder="Your Email"
               required
               autoComplete="email"
-              className="w-full px-4 py-3 bg-transparent  border-b-2 border-white  text-white outline-none transition duration-300 focus:scale-105 focus:shadow-lg"
+              className="w-full px-4 py-3 bg-transparent  border-b-2 border-[--border-color]  text-white outline-none transition duration-300 focus:scale-105 focus:shadow-lg"
             />
           </div>
 
@@ -87,7 +87,7 @@ export default function ContactPage() {
               placeholder="Your Message"
               rows={4}
               required
-              className="w-full px-4 py-3 bg-transparent  border-b-2 border-white  text-white outline-none transition duration-300 focus:scale-105 focus:shadow-lg"
+              className="w-full px-4 py-3 bg-transparent  border-b-2 border-[--border-color]  text-white outline-none transition duration-300 focus:scale-105 focus:shadow-lg"
             ></textarea>
           </div>
 

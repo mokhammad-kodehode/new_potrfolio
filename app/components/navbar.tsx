@@ -113,14 +113,14 @@ export default function Navbar() {
         <div className="fixed bottom-0 left-0 w-full py-4">
           <div className="flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto px-4 gap-4">
             <div className="flex gap-6">
-              <a href="https://github.com/your-username" target="_blank" className="hover:text-gray-400 transition">
+              <a href="https://github.com/mokhammad-kodehode?tab=repositories" target="_blank" className="hover:text-gray-400 transition">
                 <FaGithub size={38} />
               </a>
-              <a href="https://linkedin.com/in/your-profile" target="_blank" className="hover:text-gray-400 transition">
+              <a href="https://linkedin.com/in/mohammad-dzhabrailov-79a207275" target="_blank" className="hover:text-gray-400 transition">
                 <FaLinkedin size={38} />
               </a>
             </div>
-            <button onClick={() => window.open("/cv.pdf", "_blank")}
+            <button onClick={() => window.open("/CV-MD.pdf", "_blank")}
                     className="px-6 py-3 border text-white font-semibold rounded hover:bg-white hover:text-black transition">
               Download CV
             </button>
